@@ -1,16 +1,18 @@
-# React + Vite
+# Shamim Electro Palace
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Next.js (App Router) storefront for the Rawalpindi showroom. Customers browse the
+catalog and order over WhatsApp - there is no cart or online payment.
 
-Currently, two official plugins are available:
+`npm run dev` to develop, `npm run build` to ship (Netlify).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+src/app/          routes (one page.jsx per URL), globals.css, icon.png, opengraph-image.jpg
+src/components/   layout/ home/ product/ admin/ - one component per file
+src/context/      StoreContext (the catalog; localStorage until the database is connected)
+src/data/         products.js (seed catalog), store.js (phone, address, WhatsApp, hours)
+src/lib/          format, filterProducts, whatsapp, storage helpers
+public/           logo-small.jpg
+```
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Brand colours live at the top of `src/app/globals.css` and come from the logo:
+blue `#011ab4`, gold `#e9bf1b`.
