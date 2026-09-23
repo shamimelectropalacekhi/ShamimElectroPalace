@@ -15,10 +15,10 @@ export function StoreProvider({ children }) {
   // Read storage after mount so server and client HTML match; `loaded` stops the seed overwriting saved edits.
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- intentional: hydrate from localStorage after mount
-    setProducts(getStored('shamim-products-v2', seedProducts))
+    setProducts(getStored('shamim-products-v3', seedProducts))
     setLoaded(true)
   }, [])
-  useEffect(() => { if (loaded) setStored('shamim-products-v2', products) }, [products, loaded])
+  useEffect(() => { if (loaded) setStored('shamim-products-v3', products) }, [products, loaded])
 
   return <StoreContext.Provider value={{ products, setProducts }}>{children}</StoreContext.Provider>
 }

@@ -1,22 +1,26 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import { money, priceOf } from '@/lib/format'
+import { money, offOf, priceOf } from '@/lib/format'
+import { productEnquiry, whatsappLink } from '@/lib/whatsapp'
+import WhatsAppIcon from '@/components/layout/WhatsAppIcon'
+import { ProductVisual } from './ProductIcon'
 
+// The title link stretches over the whole card; the WhatsApp button sits above it.
 export default function ProductCard({ product }) {
   const price = priceOf(product)
-  const href = `/product/${product.slug}`
-  return <article className="product-card">
-    <Link className="product-image" href={href}>
-      <img src={product.image} alt={product.name} loading="lazy" />
-      <span className={product.stock ? 'product-badge' : 'product-badge sold'}>{product.stock ? product.badge : 'Out of stock'}</span>
-      <span className="zoom-icon"><ArrowRight size={17} /></span>
-    </Link>
-    <div className="product-info">
-      <p className="product-brand">{product.brand} <span>·</span> {product.category}</p>
-      <h3>{product.name}</h3>
-      <div className="stock-line">{product.stock ? <><span className="stock-dot" /> In stock · {product.stock} left</> : <span className="sold-text">Currently unavailable</span>}</div>
-      <div className="price-row"><strong>{money(price)}</strong>{price !== product.price && <del>{money(product.price)}</del>}</div>
-      <Link className="add-button" href={href}>View product <ArrowRight size={15} /></Link>
+  const discounted = price < product.price
+  return <article className="card">
+    <div className="card-media">
+      <ProductVisual product={product} />
+      {discounted && <div className="off-tag">{offOf(product)}<br />OFF</div>}
+    </div>
+    <div className="card-body">
+      <Link className="card-title" href={`/product/${product.slug}`}>{product.name}</Link>
+      <div className="card-spec">{product.summary || product.brand}</div>
+      <div className="card-price"><b>{money(price)}</b>{discounted && <del>{money(product.price)}</del>}</div>
+      <div className="card-rule" />
+      {discounted && <div className="save">Save {money(product.price - price)}</div>}
+      <div className="card-fill" />
+      <a className="wa-btn card-wa" href={whatsappLink(productEnquiry(product))} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /><span>Chat on WhatsApp</span></a>
     </div>
   </article>
 }

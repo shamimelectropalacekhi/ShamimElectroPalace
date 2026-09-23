@@ -9,6 +9,7 @@ export const store = {
   phoneHref: 'tel:+92515123456',
   email: 'hello@shamimelectropalace.pk',
   address: 'Murree Road, Rawalpindi',
+  city: 'Rawalpindi & Islamabad',
   hours: 'Mon-Sat, 10am-8pm',
   logo: '/logo-small.jpg',
 }

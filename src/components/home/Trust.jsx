@@ -1,18 +1,18 @@
-import { BadgeCheck, Headphones, Truck } from 'lucide-react'
+import { BadgeCheck, CreditCard, ShieldCheck, Truck } from 'lucide-react'
+import { store } from '@/data/store'
 
 const promises = [
-  { Icon: BadgeCheck, title: 'Authentic products', text: 'Every unit carries its official brand warranty, straight from the distributor.' },
-  { Icon: Truck, title: 'Delivery you can trust', text: 'Careful delivery and installation across Rawalpindi and Islamabad, on time.' },
-  { Icon: Headphones, title: 'Here to help', text: 'Real people who know the products and will tell you which one actually fits.' },
+  { Icon: BadgeCheck, title: 'Genuine Products', text: '100% original stock from authorized distributors' },
+  { Icon: ShieldCheck, title: 'Official Warranty', text: 'Full brand warranty on every appliance' },
+  { Icon: Truck, title: 'Free Delivery & Installation', text: `Across ${store.city} on ACs & large appliances` },
+  { Icon: CreditCard, title: 'Easy Installments', text: 'Flexible plans on bank credit cards' },
 ]
 
 export default function Trust() {
-  return <section className="promise-row">
-    <div className="promise-title">
-      <p className="eyebrow">WHY CHOOSE US</p>
-      <h2>Ten years of getting it right</h2>
-      <p>A showroom on Murree Road, and the same advice we would give our own family.</p>
-    </div>
-    {promises.map(({ Icon, title, text }) => <div key={title}><Icon className="promise-icon" /><strong>{title}</strong><p>{text}</p></div>)}
+  return <section className="trust">
+    {promises.map(({ Icon, title, text }) => <div key={title}>
+      <span className="trust-icon"><Icon size={24} /></span>
+      <span className="trust-copy"><b>{title}</b><small>{text}</small></span>
+    </div>)}
   </section>
 }

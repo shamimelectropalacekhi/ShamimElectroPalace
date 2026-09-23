@@ -2,39 +2,51 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, Phone, Search, X } from 'lucide-react'
+import { Phone, Search } from 'lucide-react'
+import { useStore } from '@/context/StoreContext'
 import { store } from '@/data/store'
-import Brand from './Brand'
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/products', label: 'Shop' },
-  { href: '/about', label: 'About & contact' },
-  { href: '/admin', label: 'Admin' },
-]
+import { categories } from '@/data/products'
+import { categoryHref } from '@/lib/format'
+import { generalEnquiry, whatsappLink } from '@/lib/whatsapp'
+import WhatsAppIcon from './WhatsAppIcon'
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
   const [search, setSearch] = useState('')
   const router = useRouter()
   const pathname = usePathname()
+  const { products } = useStore()
 
-  // Search submits rather than firing per keystroke, so the results page stays server-rendered.
+  // Highlight the category pill on its listing page and on its products' pages.
+  const slug = pathname.startsWith('/product/') && decodeURIComponent(pathname.slice(9))
+  const active = pathname === '/' ? 'Home' : slug ? products.find((p) => p.slug === slug)?.category : decodeURIComponent(pathname.split('/category/')[1] || '')
+
   const onSubmit = (event) => {
     event.preventDefault()
-    router.push(search ? `/products?q=${encodeURIComponent(search)}` : '/products')
+    const q = search.trim()
+    router.push(q ? `/products?q=${encodeURIComponent(q)}` : '/products')
   }
 
-  return <header className="topbar">
-    <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'}>{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
-    <Brand />
-    <form className="search-box" onSubmit={onSubmit} role="search">
-      <button type="submit" aria-label="Search"><Search size={17} /></button>
-      <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products or brands" aria-label="Search products or brands" />
-    </form>
-    <nav className={menuOpen ? 'main-nav open' : 'main-nav'} onClick={() => setMenuOpen(false)}>
-      {navLinks.map(({ href, label }) => <Link key={href} href={href} className={pathname === href ? 'active' : ''}>{label}</Link>)}
+  return <header className="site-header">
+    <div className="header-row">
+      <Link href="/" className="brand">
+        <img src={store.logo} alt={store.name} width="56" height="56" />
+        <span><b>Shamim <em>Electro</em> Palace</b><small>Electronics &amp; Home Appliances</small></span>
+      </Link>
+      <form className="header-search" onSubmit={onSubmit} role="search">
+        <Search size={18} aria-hidden="true" />
+        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search ACs, refrigerators, washing machines…" aria-label="Search products" />
+        <button type="submit">Search</button>
+      </form>
+      <div className="header-actions">
+        <a className="call-link" href={store.phoneHref} aria-label={`Call ${store.phone}`}>
+          <span className="call-icon"><Phone size={18} /></span>
+          <span className="call-text"><small>Call us</small><b>{store.phone}</b></span>
+        </a>
+        <a className="wa-pill" href={whatsappLink(generalEnquiry)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /><span>WhatsApp</span></a>
+      </div>
+    </div>
+    <nav className="cat-nav">
+      {['Home', ...categories].map((label) => <Link key={label} href={label === 'Home' ? '/' : categoryHref(label)} className={label === active ? 'active' : ''}>{label}</Link>)}
     </nav>
-    <div className="header-actions"><a className="call-link" href={store.phoneHref}><Phone size={16} /> <span>{store.phone}</span></a></div>
   </header>
 }

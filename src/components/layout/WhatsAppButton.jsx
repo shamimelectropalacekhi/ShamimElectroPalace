@@ -1,9 +1,8 @@
-import { store } from '@/data/store'
-import { whatsappLink } from '@/lib/whatsapp'
+import { generalEnquiry, whatsappLink } from '@/lib/whatsapp'
 import WhatsAppIcon from './WhatsAppIcon'
 
 export default function WhatsAppButton() {
-  return <a className="whatsapp" href={whatsappLink(`Hello ${store.name}, I have a question.`)} target="_blank" rel="noreferrer" aria-label={`Chat with ${store.name} on WhatsApp`}>
-    <WhatsAppIcon size={21} /><span>Chat with us</span>
+  return <a className="wa-float" href={whatsappLink(generalEnquiry)} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <WhatsAppIcon size={32} />
   </a>
 }

@@ -1,31 +1,47 @@
+'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, BadgeCheck, Headphones, Search } from 'lucide-react'
-import { seedProducts } from '@/data/products'
-import { money, priceOf } from '@/lib/format'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { categoryHref } from '@/lib/format'
+import { whatsappLink } from '@/lib/whatsapp'
+import WhatsAppIcon from '@/components/layout/WhatsAppIcon'
+import ProductIcon from '@/components/product/ProductIcon'
 
-// Two chips float over the panel edge. Static picks, so the hero stays server-rendered.
-const chips = [seedProducts[1], seedProducts[5]]
+const slides = [
+  { eyebrow: 'Best deals on air conditioners', title: 'COOL SUMMER DEALS', sub: 'Inverter ACs up to 30% OFF', category: 'Air Conditioners', msg: "Hi, I'd like to know about your Cool Summer Deals on inverter ACs." },
+  { eyebrow: 'Front load, top load & twin tub', title: 'WASH DAY, SORTED.', sub: 'Automatic washers from Rs. 84,999', category: 'Washing Machines', msg: "Hi, I'd like to know about your washing machine offers." },
+  { eyebrow: 'Glass door & inverter fridges', title: 'STAY FRESH LONGER.', sub: 'Refrigerators up to 20% OFF', category: 'Refrigerators', msg: "Hi, I'd like to know about your refrigerator offers." },
+  { eyebrow: 'Air fryers, microwaves & more', title: 'SMART KITCHEN WEEK.', sub: 'Small appliances up to 25% OFF', category: 'Small Kitchen Appliances', msg: "Hi, I'd like to know about your kitchen appliance offers." },
+]
 
 export default function Hero() {
-  return <section className="hero-section">
+  const [index, setIndex] = useState(0)
+  const step = (by) => setIndex((i) => (i + by + slides.length) % slides.length)
+
+  // Autoplay; re-arming on every change means a manual click restarts the 5.5s wait.
+  useEffect(() => {
+    const timer = setTimeout(() => step(1), 5500)
+    return () => clearTimeout(timer)
+  }, [index])
+
+  const slide = slides[index]
+  return <section className="hero" aria-roledescription="carousel">
     <div className="hero-panel">
-      <img className="hero-bg" src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1600&q=90" alt="" />
       <div className="hero-copy">
-        <p className="eyebrow">THE SMARTER HOME STARTS HERE</p>
-        <h1>Make your home more <em>comfortable &amp; modern</em></h1>
-        <p className="hero-intro">Genuine appliances from the brands you already trust, delivered and installed across Rawalpindi &amp; Islamabad.</p>
-        {/* Plain GET form - /products already reads ?q=, so no client JS needed here. */}
-        <form className="hero-search" action="/products">
-          <input name="q" placeholder="Search appliances or brands" aria-label="Search appliances or brands" />
-          <button type="submit" aria-label="Search"><Search size={18} /></button>
-        </form>
-        <div className="hero-notes"><span><BadgeCheck size={15} /> Genuine warranty</span><span><Headphones size={15} /> Installation support</span></div>
+        <div className="hero-eyebrow">{slide.eyebrow}</div>
+        <div className="hero-title">{slide.title}</div>
+        <div className="hero-sub">{slide.sub}</div>
+        <div className="hero-ctas">
+          <a className="wa-pill hero-wa" href={whatsappLink(slide.msg)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /><span>Chat on WhatsApp</span></a>
+          <Link className="hero-browse" href={categoryHref(slide.category)}>Browse {slide.category} ›</Link>
+        </div>
+        <div className="dots">{slides.map((s, i) => <button key={s.title} className={i === index ? 'on' : ''} onClick={() => setIndex(i)} aria-label={`Go to slide ${i + 1}`} />)}</div>
+      </div>
+      <div className="hero-art">
+        <div className="hero-orb"><ProductIcon category={slide.category} /><span>product image</span></div>
       </div>
     </div>
-    {chips.map((product, index) => <Link key={product.id} className={`hero-chip ${index ? 'two' : 'one'}`} href={`/product/${product.slug}`}>
-      <img src={product.image} alt="" />
-      <span><small>{product.brand}</small><b>{product.name}</b><i>{money(priceOf(product))}</i></span>
-      <ArrowRight size={15} />
-    </Link>)}
+    <button className="hero-arrow prev" onClick={() => step(-1)} aria-label="Previous"><ChevronLeft size={22} /></button>
+    <button className="hero-arrow next" onClick={() => step(1)} aria-label="Next"><ChevronRight size={22} /></button>
   </section>
 }
