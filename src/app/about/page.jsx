@@ -1,9 +1,13 @@
 import { Headphones, Store, Zap } from 'lucide-react'
-import { store } from '@/data/store'
+import { getCatalog } from '@/lib/sanity'
 
-export const metadata = { title: 'About & contact', description: `Visit ${store.name} on ${store.address}, or reach us by phone and WhatsApp.` }
+export async function generateMetadata() {
+  const { store } = await getCatalog()
+  return { title: 'About & contact', description: `Visit ${store.name} on ${store.address}, or reach us by phone and WhatsApp.` }
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { store } = await getCatalog()
   return <main className="about-page">
     <div>
       <p className="eyebrow">THE SHAMIM ELECTRO PALACE STORY</p>

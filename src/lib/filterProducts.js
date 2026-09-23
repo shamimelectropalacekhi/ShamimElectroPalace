@@ -1,6 +1,5 @@
 // Listing filters. Pure, so it runs on the server render and in filterProducts.check.mjs.
 const priceOf = (product) => product.discountedPrice || product.price
-const KITCHEN = 'Small Kitchen Appliances'
 
 export const emptyFilters = () => ({ brands: [], price: null, caps: [], inv: null })
 
@@ -11,7 +10,8 @@ export const sortOptions = [
   { value: 'off', label: 'Biggest Discount' },
 ]
 
-export const priceBuckets = (category) => category === KITCHEN
+// Cheaper ranges when everything listed is under Rs. 100,000 (small appliances).
+export const priceBuckets = (products) => products.length && products.every((p) => priceOf(p) < 100000)
   ? [[0, 10000, 'Under Rs. 10,000'], [10000, 25000, 'Rs. 10,000 – 25,000'], [25000, 50000, 'Rs. 25,000 – 50,000'], [50000, Infinity, 'Above Rs. 50,000']]
   : [[0, 100000, 'Under Rs. 100,000'], [100000, 175000, 'Rs. 100,000 – 175,000'], [175000, 250000, 'Rs. 175,000 – 250,000'], [250000, Infinity, 'Above Rs. 250,000']]
 

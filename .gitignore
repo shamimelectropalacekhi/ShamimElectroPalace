@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .next
+
+# Sanity Studio local cache
+.sanity

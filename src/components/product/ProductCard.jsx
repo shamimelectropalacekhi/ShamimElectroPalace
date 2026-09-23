@@ -1,11 +1,14 @@
+'use client'
 import Link from 'next/link'
 import { money, offOf, priceOf } from '@/lib/format'
+import { useStore } from '@/context/StoreContext'
 import { productEnquiry, whatsappLink } from '@/lib/whatsapp'
 import WhatsAppIcon from '@/components/layout/WhatsAppIcon'
 import { ProductVisual } from './ProductIcon'
 
 // The title link stretches over the whole card; the WhatsApp button sits above it.
 export default function ProductCard({ product }) {
+  const { store } = useStore()
   const price = priceOf(product)
   const discounted = price < product.price
   return <article className="card">
@@ -20,7 +23,7 @@ export default function ProductCard({ product }) {
       <div className="card-rule" />
       {discounted && <div className="save">Save {money(product.price - price)}</div>}
       <div className="card-fill" />
-      <a className="wa-btn card-wa" href={whatsappLink(productEnquiry(product))} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /><span>Chat on WhatsApp</span></a>
+      <a className="wa-btn card-wa" href={whatsappLink(store.whatsapp, productEnquiry(product))} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /><span>Chat on WhatsApp</span></a>
     </div>
   </article>
 }

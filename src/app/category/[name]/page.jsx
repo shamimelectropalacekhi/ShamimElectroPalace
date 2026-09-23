@@ -1,9 +1,12 @@
 import { notFound } from 'next/navigation'
 import ProductListing from '@/components/product/ProductListing'
-import { categories } from '@/data/products'
+import { getCatalog } from '@/lib/sanity'
 
-export const generateStaticParams = () => categories.map((name) => ({ name }))
-export const dynamicParams = false
+// Pre-built at deploy time; categories added in Sanity later are built on first visit.
+export async function generateStaticParams() {
+  const { categories } = await getCatalog()
+  return categories.map(({ name }) => ({ name }))
+}
 
 export async function generateMetadata({ params }) {
   const name = decodeURIComponent((await params).name)
@@ -12,6 +15,7 @@ export async function generateMetadata({ params }) {
 
 export default async function CategoryPage({ params }) {
   const name = decodeURIComponent((await params).name)
-  if (!categories.includes(name)) notFound()
+  const { categories } = await getCatalog()
+  if (!categories.some((c) => c.name === name)) notFound()
   return <ProductListing key={name} title={name} category={name} />
 }

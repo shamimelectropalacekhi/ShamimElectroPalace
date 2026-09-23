@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Phone, Search } from 'lucide-react'
 import { useStore } from '@/context/StoreContext'
-import { store } from '@/data/store'
-import { categories } from '@/data/products'
 import { categoryHref } from '@/lib/format'
 import { generalEnquiry, whatsappLink } from '@/lib/whatsapp'
 import WhatsAppIcon from './WhatsAppIcon'
@@ -14,7 +12,7 @@ export default function Header() {
   const [search, setSearch] = useState('')
   const router = useRouter()
   const pathname = usePathname()
-  const { products } = useStore()
+  const { store, categories, products } = useStore()
 
   // Highlight the category pill on its listing page and on its products' pages.
   const slug = pathname.startsWith('/product/') && decodeURIComponent(pathname.slice(9))
@@ -42,11 +40,11 @@ export default function Header() {
           <span className="call-icon"><Phone size={18} /></span>
           <span className="call-text"><small>Call us</small><b>{store.phone}</b></span>
         </a>
-        <a className="wa-pill" href={whatsappLink(generalEnquiry)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /><span>WhatsApp</span></a>
+        <a className="wa-pill" href={whatsappLink(store.whatsapp, generalEnquiry(store))} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /><span>WhatsApp</span></a>
       </div>
     </div>
     <nav className="cat-nav">
-      {['Home', ...categories].map((label) => <Link key={label} href={label === 'Home' ? '/' : categoryHref(label)} className={label === active ? 'active' : ''}>{label}</Link>)}
+      {['Home', ...categories.map((c) => c.name)].map((label) => <Link key={label} href={label === 'Home' ? '/' : categoryHref(label)} className={label === active ? 'active' : ''}>{label}</Link>)}
     </nav>
   </header>
 }

@@ -14,14 +14,15 @@ const Radio = ({ on }) => <span className={on ? 'radio on' : 'radio'}><span /></
 
 // Catalog page body. `category` narrows the list; `query` and `brand` come from the URL (?q=, ?brand=).
 export default function ProductListing({ title, category, query = '', brand }) {
-  const { products } = useStore()
+  const { store, categories, products } = useStore()
+  const info = categories.find((c) => c.name === category)
   const router = useRouter()
   const [f, setF] = useState(() => ({ ...emptyFilters(), brands: brand ? [brand] : [] }))
   const [sort, setSort] = useState('pop')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const buckets = priceBuckets(category)
   const base = baseProducts(products, { category, query })
+  const buckets = priceBuckets(base)
   const shown = filterProducts(base, f, buckets, sort)
   const patch = (next) => setF({ ...f, ...next })
   const toggle = (key, value) => patch({ [key]: f[key].includes(value) ? f[key].filter((x) => x !== value) : [...f[key], value] })
@@ -30,7 +31,7 @@ export default function ProductListing({ title, category, query = '', brand }) {
   const brandNames = [...new Set(base.map((p) => p.brand))].sort()
   const caps = [...new Set(base.map((p) => p.cap).filter(Boolean))].sort((a, b) => parseFloat(a) - parseFloat(b))
   const showCaps = category && caps.length > 1
-  const showInv = category && category !== 'Small Kitchen Appliances'
+  const showInv = category && info?.inverterFilter
   const active = f.brands.length + f.caps.length + (f.price != null) + (f.inv != null)
   const heading = category ? title : query ? `Results for “${query}”` : 'All Products'
 
@@ -59,7 +60,7 @@ export default function ProductListing({ title, category, query = '', brand }) {
           </button>)}
         </div>
         {showCaps && <div className="facet">
-          <span className="facet-label">{category === 'Air Conditioners' ? 'Tonnage' : 'Capacity'}</span>
+          <span className="facet-label">{info?.capacityLabel || 'Capacity'}</span>
           <div className="pills">{caps.map((cap) => <button key={cap} className={f.caps.includes(cap) ? 'pill on' : 'pill'} onClick={() => toggle('caps', cap)}>{cap}</button>)}</div>
         </div>}
         {showInv && <div className="facet">
@@ -77,7 +78,7 @@ export default function ProductListing({ title, category, query = '', brand }) {
             <span>Not everything is listed online — message us and we&apos;ll check stock at the store.</span>
             <div>
               <button className="outline-btn" onClick={clear}>Clear filters</button>
-              <a className="wa-btn" href={whatsappLink(generalEnquiry)} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} />Ask on WhatsApp</a>
+              <a className="wa-btn" href={whatsappLink(store.whatsapp, generalEnquiry(store))} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} />Ask on WhatsApp</a>
             </div>
           </div>}
       </div>

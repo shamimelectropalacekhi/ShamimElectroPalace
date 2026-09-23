@@ -8,8 +8,9 @@ const products = [
   { name: 'B', brand: 'Gree', category: AC, cap: '1.5 Ton', inv: false, price: 100000, discountedPrice: 90000 },
   { name: 'C', brand: 'Haier', category: 'Refrigerators', cap: '1 Ton', inv: true, price: 50000, discountedPrice: 50000 },
 ]
-const buckets = priceBuckets(AC)
 const base = baseProducts(products, { category: AC })
+const buckets = priceBuckets(base)
+assert.equal(priceBuckets([products[2]])[0][2], 'Under Rs. 10,000')
 assert.deepEqual(base.map((p) => p.name), ['A', 'B'])
 assert.deepEqual(baseProducts(products, { query: 'gree' }).map((p) => p.name), ['B'])
 
