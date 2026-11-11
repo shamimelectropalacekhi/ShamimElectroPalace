@@ -12,6 +12,7 @@ export const brand = defineType({
     defineField({ name: 'slug', title: 'Web address', type: 'slug', hidden: true, options: { source: 'name', maxLength: 60 } }),
 
     defineField({ name: 'showInTopBrands', title: 'Show on the home page in "Top Appliance Brands"', type: 'boolean', initialValue: false }),
+    defineField({ name: 'logo', title: 'Card logo', type: 'image', options: { hotspot: true }, description: 'Fills the whole Top Brands card. Only "Up to X% OFF" is written on top; the label, name badge and picture below are then ignored. Use the crop/hotspot to choose what stays visible.' }),
     defineField({ name: 'order', title: 'Position in Top Brands', type: 'number', fieldset: 'card', description: '1 = first card.', initialValue: 10 }),
     defineField({ name: 'cardTag', title: 'Card label', type: 'string', fieldset: 'card', description: 'Small label at the top, e.g. "INVERTER ACS".' }),
     defineField({ name: 'upToOff', title: 'Discount on card (%)', type: 'number', fieldset: 'card', description: 'Shown as "Up to 30% OFF". Leave empty to hide.', validation: (r) => r.min(1).max(90).integer() }),

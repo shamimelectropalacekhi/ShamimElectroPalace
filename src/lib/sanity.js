@@ -16,7 +16,7 @@ const QUERY = `{
     ..., heroSlides[]{ eyebrow, title, subtitle, whatsappMessage, "category": category->name, "icon": category->icon, "image": image.asset->url }
   },
   "categories": *[_type == "category"] | order(order asc, name asc){ name, icon, subtitle, footerLine, rowHeading, capacityLabel, inverterFilter },
-  "brands": *[_type == "brand" && showInTopBrands == true] | order(order asc, name asc){ name, cardTag, upToOff, cardColor, logoColor, "icon": cardCategory->icon },
+  "brands": *[_type == "brand" && showInTopBrands == true] | order(order asc, name asc){ name, cardTag, upToOff, cardColor, logoColor, "icon": cardCategory->icon, "logo": logo.asset->url },
   "products": *[_type == "product" && defined(name)] | order(_createdAt desc){
     "id": _id, "slug": slug.current, name, model, price, salePrice, inStock, description, capacity, inverter, type,
     "brand": brand->name, "category": category->name, "icon": category->icon, "images": images[]{ alt, "url": asset->url }
@@ -51,7 +51,7 @@ const toBrandCard = (b) => {
   const bg = b.cardColor || '#EFEFEF'
   const dark = isDark(bg)
   return {
-    name: b.name, tag: b.cardTag, off: b.upToOff, icon: b.icon, bg, logoBg: b.logoColor || '#111111', logoFg: '#fff', dark,
+    name: b.name, tag: b.cardTag, off: b.upToOff, icon: b.icon, bg, logo: sized(b.logo, 800), logoBg: b.logoColor || '#111111', logoFg: '#fff', dark,
     fg: dark ? '#fff' : '#222', tagBg: dark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.07)', circle: dark ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.55)',
   }
 }

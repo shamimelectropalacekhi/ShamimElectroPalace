@@ -37,7 +37,9 @@ export default function TopBrands() {
   return <section>
     <SectionHead prefix="Top" accent="Appliance Brands" href="/products" />
     <div className="brand-scroll" ref={ref} onScroll={measure}>
-      {brandDeals.map((b) => <Link key={b.name} className="brand-card" href={`/products?brand=${encodeURIComponent(b.name)}`} style={{ background: b.bg, color: b.fg }}>
+      {brandDeals.map((b) => b.logo ? <Link key={b.name} className="brand-card brand-card--logo" href={`/products?brand=${encodeURIComponent(b.name)}`} aria-label={b.name} style={{ backgroundImage: `url(${b.logo})` }}>
+        {b.off && <span className="brand-off">Up to {b.off}% OFF</span>}
+      </Link> : <Link key={b.name} className="brand-card" href={`/products?brand=${encodeURIComponent(b.name)}`} style={{ background: b.bg, color: b.fg }}>
         <span className="brand-copy">
           {b.tag && <span className="brand-tag" style={{ background: b.tagBg }}>{b.tag}</span>}
           <span className="brand-logo" style={{ background: b.logoBg, color: b.logoFg }}>{b.name}</span>
