@@ -20,8 +20,8 @@ export const siteSettings = defineType({
     defineField({ name: 'phone', title: 'Phone number', type: 'string', group: 'contact', description: 'As customers should see it, e.g. "+92 51 512 3456".', validation: (r) => r.required() }),
     defineField({ name: 'email', title: 'Email', type: 'string', group: 'contact', validation: (r) => r.email() }),
     defineField({ name: 'address', title: 'Shop address', type: 'string', group: 'contact', validation: (r) => r.required() }),
-    defineField({ name: 'city', title: 'Delivery area', type: 'string', group: 'contact', description: 'Used in text like "Free delivery across …", e.g. "Rawalpindi & Islamabad".' }),
-    defineField({ name: 'hours', title: 'Store timings', type: 'text', rows: 2, group: 'contact', description: 'One line per row, e.g. "Mon – Sat: 10:00 AM – 9:00 PM".' }),
+    defineField({ name: 'city', title: 'Delivery area', type: 'string', group: 'contact', description: 'Used in text like "Free delivery across …", e.g. "Karachi".' }),
+    defineField({ name: 'hours', title: 'Store timings', type: 'text', rows: 4, group: 'contact', description: 'One line per row, e.g. "Mon – Sat: 10:00 AM – 9:00 PM".' }),
     defineField({ name: 'mapsLink', title: 'Google Maps link', type: 'url', group: 'contact', description: 'Open the shop in Google Maps, click Share, copy the link. Leave empty to search by address.' }),
     defineField({ name: 'footerText', title: 'Footer description', type: 'text', rows: 2, group: 'contact', description: 'The short line under the logo in the footer.' }),
 

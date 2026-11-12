@@ -1,6 +1,6 @@
 # Shamim Electro Palace
 
-Next.js (App Router) storefront for the Rawalpindi showroom. Customers browse the
+Next.js (App Router) storefront for the Karachi (Saddar) showroom. Customers browse the
 catalog and order over WhatsApp - there is no cart or online payment.
 
 `npm run dev` to develop, `npm run build` to ship (Netlify).
