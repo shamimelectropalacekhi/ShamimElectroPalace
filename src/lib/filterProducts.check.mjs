@@ -1,7 +1,7 @@
 // Run: node src/lib/filterProducts.check.mjs
 import assert from 'node:assert/strict'
 import { countIn, emptyFilters, filterProducts, fromQuery, PAGE, priceBuckets, sizeGroup, toQuery } from './filterProducts.js'
-import { pickFeatured, pickRelated } from './picks.js'
+import { pickRelated, pickRow } from './picks.js'
 
 const AC = 'Air Conditioners'
 const base = [
@@ -41,12 +41,15 @@ assert.deepEqual(fromQuery({ brand: 'Haier' }).f.brands, ['Haier']) // plain obj
 assert.equal(toQuery({ f: emptyFilters(), sort: 'new', shown: PAGE }), '')
 assert.deepEqual(fromQuery({ sort: 'bogus', price: '9', n: '-5' }), { f: emptyFilters(), sort: 'new', shown: PAGE })
 
-// Home rows: hand-picked first, then photos, mixing brands.
+// Home rows: hand-picked first (in the order picked), then products with photos, mixing brands.
 const row = [
   { id: 1, brand: 'PEL', thumb: 'x' }, { id: 2, brand: 'PEL', thumb: 'x' }, { id: 3, brand: 'PEL' },
-  { id: 4, brand: 'Haier', thumb: 'x' }, { id: 5, brand: 'Orient', thumb: 'x', featured: true },
+  { id: 4, brand: 'Haier', thumb: 'x' }, { id: 5, brand: 'Orient', thumb: 'x' },
 ]
-assert.deepEqual(pickFeatured(row, 4).map((p) => p.id), [5, 1, 4, 2])
+assert.deepEqual(pickRow(row, [], 4).map((p) => p.id), [1, 4, 5, 2])
+assert.deepEqual(pickRow(row, [3, 5], 4).map((p) => p.id), [3, 5, 1, 4]) // a picked product shows even without a photo
+assert.deepEqual(pickRow(row, ['gone', 2, 2], 2).map((p) => p.id), [2, 1]) // deleted or repeated picks are skipped
+assert.equal(pickRow(row, [1, 2, 3, 4, 5, 6]).length, 5)
 // Related: same brand and close price first.
 const related = pickRelated({ id: 1, brand: 'Haier', category: AC, price: 150000 }, [
   { id: 1, brand: 'Haier', category: AC, price: 150000 }, { id: 2, brand: 'Gree', category: AC, price: 151000 },

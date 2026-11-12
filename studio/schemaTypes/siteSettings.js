@@ -8,6 +8,7 @@ export const siteSettings = defineType({
   groups: [
     { name: 'contact', title: 'Contact', default: true },
     { name: 'hero', title: 'Home page banner' },
+    { name: 'rows', title: 'Home page rows' },
     { name: 'pages', title: 'About & Help pages' },
     { name: 'social', title: 'Social media' },
   ],
@@ -41,6 +42,42 @@ export const siteSettings = defineType({
           defineField({ name: 'image', title: 'Picture (optional)', type: 'image', options: { hotspot: true }, description: 'Replaces the icon on the right. A product photo on a transparent or dark background works best.' }),
         ],
         preview: { select: { title: 'title', subtitle: 'subtitle', media: 'image' } },
+      })],
+    }),
+
+    defineField({
+      name: 'homeRows', title: 'Product rows on the home page', type: 'array', group: 'rows',
+      description: 'Add a row for each category to show on the home page, in the order you want (drag to reorder). Each row shows five products: the ones you pick first, then the rest are filled automatically. Leave this list empty to show the first five categories from the menu.',
+      validation: (r) => r.max(12),
+      of: [defineArrayMember({
+        type: 'object', name: 'homeRow',
+        fields: [
+          defineField({ name: 'category', title: 'Category', type: 'reference', to: [{ type: 'category' }], options: { disableNew: true }, validation: (r) => r.required() }),
+          defineField({
+            name: 'products', title: 'Products to show (up to 5, optional)', type: 'array',
+            description: 'Pick from this row\'s category, in the order to show them. Leave empty, or pick fewer than five, and the row fills itself with a mix of brands.',
+            validation: (r) => r.max(5).unique(),
+            of: [defineArrayMember({
+              type: 'reference', to: [{ type: 'product' }],
+              options: {
+                disableNew: true,
+                // Only products in the category chosen above this list.
+                filter: ({ document, parentPath }) => {
+                  const key = parentPath.find((step) => step && typeof step === 'object' && '_key' in step)?._key
+                  const category = document.homeRows?.find((row) => row._key === key)?.category?._ref
+                  return category ? { filter: 'category._ref == $category', params: { category } } : {}
+                },
+              },
+            })],
+          }),
+        ],
+        preview: {
+          select: { title: 'category.name', p0: 'products.0.name', p1: 'products.1.name', p2: 'products.2.name', p3: 'products.3.name', p4: 'products.4.name' },
+          prepare: ({ title, ...picked }) => {
+            const names = Object.values(picked).filter(Boolean)
+            return { title: title || 'Choose a category', subtitle: names.length ? `${names.length} picked: ${names.join(', ')}` : 'Filled automatically' }
+          },
+        },
       })],
     }),
 

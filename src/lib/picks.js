@@ -1,13 +1,17 @@
 // Which products go in the home page rows and the "More ..." row on a product page. Pure.
 const priceOf = (product) => product.discountedPrice || product.price
 
-// Products switched to "Featured" in the Studio come first. The rest of the row is filled with
-// products that have a photo, one brand at a time, so a single price-list import can't fill a row.
-export function pickFeatured(products, count = 5) {
-  const picked = products.filter((p) => p.featured).slice(0, count)
+export const ROW = 5 // products per home page row
+
+// `chosen` are product ids picked for this row in Store settings -> Home page rows, in that order.
+// Any space left is filled with products that have a photo, one brand at a time, so a single price-list import can't fill a row.
+export function pickRow(products, chosen = [], count = ROW) {
+  const byId = new Map(products.map((p) => [p.id, p]))
+  const picked = [...new Set(chosen)].map((id) => byId.get(id)).filter(Boolean).slice(0, count)
+  const taken = new Set(picked.map((p) => p.id))
   const byBrand = new Map()
   for (const p of products) {
-    if (p.featured || !p.thumb) continue
+    if (taken.has(p.id) || !p.thumb) continue
     if (!byBrand.has(p.brand)) byBrand.set(p.brand, [])
     byBrand.get(p.brand).push(p)
   }

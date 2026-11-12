@@ -35,7 +35,6 @@ export const product = defineType({
       validation: (r) => r.min(0).custom((sale, { document }) => sale == null || document?.price == null || sale <= document.price || 'The discounted price must be lower than the price'),
     }),
     defineField({ name: 'inStock', title: 'In stock', type: 'boolean', description: 'Turn off when sold out. The product stays on the website, marked out of stock.', initialValue: true }),
-    defineField({ name: 'featured', title: 'Featured on the home page', type: 'boolean', description: 'Turn on to show this product first in its category row on the home page. Each row shows five products; the rest of the row is filled automatically with a mix of brands.', initialValue: false }),
     defineField({ name: 'description', title: 'Product details', type: 'text', rows: 12, description: DETAILS_HELP }),
 
     defineField({ name: 'model', title: 'Model number', type: 'string', fieldset: 'more', description: 'Shown on the product card, e.g. "9140WB".' }),

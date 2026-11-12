@@ -14,12 +14,13 @@ const client = createClient({
 
 const QUERY = `{
   "settings": *[_id == "siteSettings"][0]{
-    ..., heroSlides[]{ eyebrow, title, subtitle, whatsappMessage, "category": category->name, "icon": category->icon, "image": image.asset->url }
+    ..., heroSlides[]{ eyebrow, title, subtitle, whatsappMessage, "category": category->name, "icon": category->icon, "image": image.asset->url },
+    "homeRows": homeRows[defined(category)]{ "category": category->name, "products": products[]._ref }
   },
   "categories": *[_type == "category"] | order(order asc, name asc){ name, icon, subtitle, footerLine, rowHeading, capacityLabel, inverterFilter },
   "brands": *[_type == "brand"] | order(order asc, name asc){ name, showInTopBrands, cardTag, upToOff, cardColor, logoColor, "icon": cardCategory->icon, "logo": logo.asset->url },
   "products": *[_type == "product" && defined(name)] | order(_createdAt desc){
-    "id": _id, "slug": slug.current, "updatedAt": _updatedAt, name, model, price, salePrice, inStock, featured, description, capacity, inverter, type,
+    "id": _id, "slug": slug.current, "updatedAt": _updatedAt, name, model, price, salePrice, inStock, description, capacity, inverter, type,
     "brand": brand->name, "category": category->name, "icon": category->icon, "images": images[]{ alt, "url": asset->url }
   }
 }`
@@ -50,7 +51,7 @@ const toProduct = (p) => {
   const images = (p.images || []).filter((image) => image.url).map((image) => ({ url: sized(image.url, 1000), thumb: sized(image.url, 400), alt: image.alt || p.name }))
   return {
     id: p.id, slug: p.slug || slugify(p.name), name: p.name, brand: p.brand || '', category: p.category || '', icon: iconFor(p.category, p.icon),
-    model: p.model, cap: p.capacity, size: sizeGroup(p.capacity), inv: Boolean(p.inverter), type: p.type, featured: Boolean(p.featured), big: BIG.includes(p.icon),
+    model: p.model, cap: p.capacity, size: sizeGroup(p.capacity), inv: Boolean(p.inverter), type: p.type, big: BIG.includes(p.icon),
     price: p.price || 0, discountedPrice: p.salePrice ?? p.price ?? 0, stock: p.inStock === false ? 0 : 1,
     images, image: images[0]?.url || '', thumb: images[0]?.thumb || '', description: details.description,
     specs: Object.fromEntries(details.specs), updatedAt: p.updatedAt,
@@ -96,6 +97,7 @@ function toStore(s = {}) {
     socials: [['Facebook', 'facebook'], ['Instagram', 'instagram'], ['TikTok', 'tiktok'], ['YouTube', 'youtube']]
       .filter(([, key]) => s[key]).map(([label, key]) => ({ label, key, url: s[key] })),
     heroSlides: (s.heroSlides || []).map((slide) => ({ ...slide, image: sized(slide.image, 700) })),
+    homeRows: (s.homeRows || []).filter((row) => row.category).map((row) => ({ category: row.category, products: (row.products || []).filter(Boolean) })),
   }
 }
 
