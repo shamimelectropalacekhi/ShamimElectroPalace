@@ -8,6 +8,7 @@ export const siteSettings = defineType({
   groups: [
     { name: 'contact', title: 'Contact', default: true },
     { name: 'hero', title: 'Home page banner' },
+    { name: 'pages', title: 'About & Help pages' },
     { name: 'social', title: 'Social media' },
   ],
   fields: [
@@ -40,6 +41,20 @@ export const siteSettings = defineType({
           defineField({ name: 'image', title: 'Picture (optional)', type: 'image', options: { hotspot: true }, description: 'Replaces the icon on the right. A product photo on a transparent or dark background works best.' }),
         ],
         preview: { select: { title: 'title', subtitle: 'subtitle', media: 'image' } },
+      })],
+    }),
+
+    defineField({ name: 'aboutText', title: 'About page text', type: 'text', rows: 4, group: 'pages', description: 'The paragraph under the heading on the About page. Leave empty to keep the standard text.' }),
+    defineField({
+      name: 'help', title: 'Help page (delivery, warranty, installments)', type: 'array', group: 'pages',
+      description: 'One box per topic on the "Delivery, warranty & installments" page. Leave empty to keep the general text that just asks customers to message you.',
+      of: [defineArrayMember({
+        type: 'object', name: 'helpSection',
+        fields: [
+          defineField({ name: 'title', title: 'Topic', type: 'string', description: 'e.g. "Delivery"', validation: (r) => r.required() }),
+          defineField({ name: 'text', title: 'Answer', type: 'text', rows: 4, description: 'One paragraph per line.', validation: (r) => r.required() }),
+        ],
+        preview: { select: { title: 'title', subtitle: 'text' } },
       })],
     }),
 

@@ -5,7 +5,12 @@ export const categoryIcons = [
   { title: 'Washing machine', value: 'washing-machine' },
   { title: 'Refrigerator', value: 'refrigerator' },
   { title: 'Microwave / kitchen', value: 'microwave' },
-  { title: 'Other', value: 'other' },
+  { title: 'TV', value: 'tv' },
+  { title: 'Water dispenser', value: 'water-dispenser' },
+  { title: 'Freezer', value: 'freezer' },
+  { title: 'Personal care', value: 'personal-care' },
+  { title: 'Home', value: 'home' },
+  { title: 'Other (picked from the category name)', value: 'other' },
 ]
 
 export const category = defineType({
