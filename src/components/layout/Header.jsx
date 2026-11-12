@@ -1,17 +1,30 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Phone, Search } from 'lucide-react'
 import { useStore } from '@/context/StoreContext'
 import { categoryHref } from '@/lib/format'
 import { generalEnquiry, whatsappLink } from '@/lib/whatsapp'
 import WhatsAppIcon from './WhatsAppIcon'
 
+// Keeps the search box in step with the address: it shows the search on /products?q=… and empties on any other page.
+// The input itself is never swapped out, so text typed while a page is still loading is kept.
+function SyncSearch({ onAddress }) {
+  const pathname = usePathname()
+  const q = useSearchParams().get('q') || ''
+  const loaded = useRef(false)
+  useEffect(() => {
+    onAddress(pathname === '/products' ? q : '', !loaded.current)
+    loaded.current = true
+  }, [pathname, q, onAddress])
+  return null
+}
+
 export default function Header() {
-  const [search, setSearch] = useState('')
   const [edges, setEdges] = useState({ start: true, end: true })
   const nav = useRef(null)
+  const searchInput = useRef(null)
   const router = useRouter()
   const pathname = usePathname()
   const { store, categories, page } = useStore()
@@ -32,13 +45,17 @@ export default function Header() {
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
   }, [active])
-  const slide = (by) => nav.current.scrollBy({ left: by * nav.current.clientWidth * 0.7, behavior: 'smooth' })
-
-  const onSubmit = (event) => {
+  // On page load only fill an empty box (don't wipe what the customer is already typing); after that, follow the address.
+  const showSearch = useCallback((text, onLoad) => {
+    const box = searchInput.current
+    if (box && !(onLoad && (!text || box.value))) box.value = text
+  }, [])
+  const onSearch = (event) => {
     event.preventDefault()
-    const q = search.trim()
+    const q = searchInput.current.value.trim()
     router.push(q ? `/products?q=${encodeURIComponent(q)}` : '/products')
   }
+  const slide = (by) => nav.current.scrollBy({ left: by * nav.current.clientWidth * 0.7, behavior: 'smooth' })
 
   return <header className="site-header">
     <div className="header-row">
@@ -46,11 +63,13 @@ export default function Header() {
         <img src={store.logo} alt={store.name} width="56" height="56" />
         <span><b>Shamim <em>Electro</em> Palace</b><small>Electronics &amp; Home Appliances</small></span>
       </Link>
-      <form className="header-search" onSubmit={onSubmit} role="search">
+      <form className="header-search" onSubmit={onSearch} role="search">
         <Search size={18} aria-hidden="true" />
-        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search ACs, fridges, washing machines…" aria-label="Search products" enterKeyHint="search" />
+        <input ref={searchInput} name="q" placeholder="Search ACs, fridges, washing machines…" aria-label="Search products" enterKeyHint="search" />
         <button type="submit">Search</button>
       </form>
+      {/* Reading the address needs a Suspense boundary on pre-built pages; SyncSearch renders nothing. */}
+      <Suspense fallback={null}><SyncSearch onAddress={showSearch} /></Suspense>
       <div className="header-actions">
         <a className="call-link" href={store.phoneHref} aria-label={`Call ${store.phone}`}>
           <span className="call-icon"><Phone size={18} /></span>
