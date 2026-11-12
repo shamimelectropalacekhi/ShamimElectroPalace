@@ -2,10 +2,11 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useStore } from '@/context/StoreContext'
+import { brandHref } from '@/lib/format'
 import ProductIcon from '@/components/product/ProductIcon'
 import { SectionHead } from '@/components/product/ProductRow'
 
-// Scroll-snapped brand cards; one dot per snap position (6 on desktop, 8 on mobile).
+// Scroll-snapped brand cards (brands with products only); one dot per snap position.
 export default function TopBrands() {
   const { brandDeals } = useStore()
   const ref = useRef(null)
@@ -35,11 +36,11 @@ export default function TopBrands() {
 
   if (!brandDeals.length) return null
   return <section>
-    <SectionHead prefix="Top" accent="Appliance Brands" href="/products" />
+    <SectionHead prefix="Top" accent="Appliance Brands" />
     <div className="brand-scroll" ref={ref} onScroll={measure}>
-      {brandDeals.map((b) => b.logo ? <Link key={b.name} className="brand-card brand-card--logo" href={`/products?brand=${encodeURIComponent(b.name)}`} aria-label={b.name} style={{ backgroundImage: `url(${b.logo})` }}>
+      {brandDeals.map((b) => b.logo ? <Link key={b.name} className="brand-card brand-card--logo" href={brandHref(b.name)} aria-label={b.name} style={{ backgroundImage: `url(${b.logo})` }}>
         {b.off && <span className="brand-off">Up to {b.off}% OFF</span>}
-      </Link> : <Link key={b.name} className="brand-card" href={`/products?brand=${encodeURIComponent(b.name)}`} style={{ background: b.bg, color: b.fg }}>
+      </Link> : <Link key={b.name} className="brand-card" href={brandHref(b.name)} style={{ background: b.bg, color: b.fg }}>
         <span className="brand-copy">
           {b.tag && <span className="brand-tag" style={{ background: b.tagBg }}>{b.tag}</span>}
           <span className="brand-logo" style={{ background: b.logoBg, color: b.logoFg }}>{b.name}</span>
@@ -51,6 +52,6 @@ export default function TopBrands() {
         </span>
       </Link>)}
     </div>
-    {dots > 1 && <div className="dots brand-dots">{Array.from({ length: dots }, (_, i) => <button key={i} className={i === index ? 'on' : ''} onClick={() => scrollTo(i)} aria-label="Scroll brands" />)}</div>}
+    {dots > 1 && <div className="dots brand-dots">{Array.from({ length: dots }, (_, i) => <button key={i} className={i === index ? 'on' : ''} onClick={() => scrollTo(i)} aria-label={`Brands, page ${i + 1}`} />)}</div>}
   </section>
 }

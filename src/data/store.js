@@ -12,4 +12,6 @@ export const store = {
   city: 'Karachi',
   hours: 'Mon – Thu: 11:00 AM – 9:30 PM\nFri: 3:00 PM – 10:00 PM\nSat: 11:00 AM – 9:30 PM\nSun: Closed',
   logo: '/logo-small.jpg',
+  // About page paragraph; overridden by Store settings -> About page text.
+  aboutText: 'We deal in home electronics and are proud dealers of Haier, Dawlance, PEL, Gree, GNE and many more brands. We help families choose reliable appliances with honest advice and dependable after-sales support.',
 }
