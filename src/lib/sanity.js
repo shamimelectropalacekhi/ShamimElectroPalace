@@ -14,7 +14,7 @@ const client = createClient({
 
 const QUERY = `{
   "settings": *[_id == "siteSettings"][0]{
-    ..., heroSlides[]{ eyebrow, title, subtitle, whatsappMessage, "category": category->name, "icon": category->icon, "image": image.asset->url },
+    ..., heroSlides[]{ eyebrow, title, subtitle, whatsappMessage, "category": category->name, "icon": category->icon, "image": image.asset->url, "full": fullImage.asset->url, "fullSpot": fullImage.hotspot{ x, y } },
     "homeRows": homeRows[defined(category)]{ "category": category->name, "products": products[]._ref }
   },
   "categories": *[_type == "category"] | order(order asc, name asc){ name, icon, subtitle, footerLine, rowHeading, capacityLabel, inverterFilter },
@@ -96,7 +96,7 @@ function toStore(s = {}) {
     help: (s.help || []).filter((section) => section.title && section.text).map(({ title, text }) => ({ title, text })),
     socials: [['Facebook', 'facebook'], ['Instagram', 'instagram'], ['TikTok', 'tiktok'], ['YouTube', 'youtube']]
       .filter(([, key]) => s[key]).map(([label, key]) => ({ label, key, url: s[key] })),
-    heroSlides: (s.heroSlides || []).map((slide) => ({ ...slide, image: sized(slide.image, 700) })),
+    heroSlides: (s.heroSlides || []).filter((slide) => slide.title || slide.full).map((slide) => ({ ...slide, image: sized(slide.image, 700), full: sized(slide.full, 2400) })),
     homeRows: (s.homeRows || []).filter((row) => row.category).map((row) => ({ category: row.category, products: (row.products || []).filter(Boolean) })),
   }
 }

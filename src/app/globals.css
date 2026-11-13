@@ -172,6 +172,12 @@ body.sheet-open { overflow: hidden; }
   min-height: clamp(230px, 30vw, 360px); overflow: hidden; position: relative;
 }
 .hero-panel::before, .hero-panel::after { aspect-ratio: 1; border-radius: 50%; content: ''; position: absolute; }
+/* Full banner picture: no dark card, no circles, the picture covers the whole banner. */
+.hero-panel--full { background: none; display: block; }
+.hero-panel--full::before, .hero-panel--full::after { content: none; }
+.hero-full { display: block; inset: 0; position: absolute; }
+.hero-full-img { height: 100%; object-fit: cover; width: 100%; }
+.hero .dots.hero-dots-over { background: rgba(15, 25, 60, .45); border-radius: 999px; bottom: 14px; left: 50%; margin: 0; padding: 0 6px; position: absolute; transform: translateX(-50%); }
 .hero-panel::before { background: rgba(255, 255, 255, .04); right: -10%; top: -45%; width: 62%; }
 .hero-panel::after { background: rgba(255, 255, 255, .025); bottom: -60%; left: -6%; width: 40%; }
 .hero-copy, .hero-art { position: relative; z-index: 1; }

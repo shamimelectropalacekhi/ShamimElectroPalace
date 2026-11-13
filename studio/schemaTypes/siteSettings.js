@@ -34,14 +34,18 @@ export const siteSettings = defineType({
       of: [defineArrayMember({
         type: 'object', name: 'heroSlide',
         fields: [
+          defineField({
+            name: 'fullImage', title: 'Full banner picture (optional)', type: 'image', options: { hotspot: true },
+            description: 'Fills the whole banner, like a poster: the dark background, text and buttons below are not shown. Best as a wide picture, about 3 times wider than tall (e.g. 2400 × 750). Tapping it opens the "Browse button" category, or WhatsApp if no category is set. Use the hotspot to choose what stays visible on phones.',
+          }),
           defineField({ name: 'eyebrow', title: 'Small top line', type: 'string', description: 'e.g. "Best deals on air conditioners"' }),
-          defineField({ name: 'title', title: 'Big headline', type: 'string', description: 'e.g. "COOL SUMMER DEALS"', validation: (r) => r.required() }),
+          defineField({ name: 'title', title: 'Big headline', type: 'string', description: 'e.g. "COOL SUMMER DEALS". With a full banner picture this is only used as its description for screen readers and Google.', validation: (r) => r.custom((title, { parent }) => Boolean(title || parent?.fullImage) || 'Add a headline, or a full banner picture') }),
           defineField({ name: 'subtitle', title: 'Line under the headline', type: 'string', description: 'e.g. "Inverter ACs up to 30% OFF"' }),
           defineField({ name: 'category', title: 'Browse button goes to', type: 'reference', to: [{ type: 'category' }] }),
           defineField({ name: 'whatsappMessage', title: 'WhatsApp message', type: 'string', description: 'Pre-filled when the customer taps "Chat on WhatsApp".' }),
           defineField({ name: 'image', title: 'Picture (optional)', type: 'image', options: { hotspot: true }, description: 'Replaces the icon on the right. A product photo on a transparent or dark background works best.' }),
         ],
-        preview: { select: { title: 'title', subtitle: 'subtitle', media: 'image' } },
+        preview: { select: { title: 'title', subtitle: 'subtitle', media: 'image', full: 'fullImage' }, prepare: ({ title, subtitle, media, full }) => ({ title: title || 'Picture banner', subtitle: full ? 'Full banner picture' : subtitle, media: full || media }) },
       })],
     }),
 
